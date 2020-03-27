@@ -16,27 +16,22 @@ class Candidate:
         pass
 
 class GaussianSteepestAscent(Candidate):
-    def __init__(self, minimum, maximum, variance):
-        Candidate.__init__(self, minimum, maximum)
-        self.variance = variance
-
-    def tweak(self, point):
+    def tweak(self, point, variance):
         prob = 1.0
         newPoint = [x for x in point]
-        variance = 5
 
         for i, x in enumerate(newPoint):
             if random.random() < prob:
-                n = random.gauss(0, self.variance)
+                n = random.gauss(0, variance)
                 while not (self.minimum <= x + n <= self.maximum):
-                    n = random.gauss(0, self.variance)
+                    n = random.gauss(0, variance)
                 newPoint[i] = x + n
 
         return newPoint
 
-    def analyze(self, point, newPoint, f):
-        w = self.tweak(point)
-        if abs(f(w)) < abs(f(newPoint)):
+    def analyze(self, point, newPoint, f, variance):
+        w = self.tweak(point, variance)
+        if f(w) < f(newPoint):
             return w
         else:
             return newPoint
