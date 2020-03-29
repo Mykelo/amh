@@ -42,17 +42,17 @@ class TSPTabu:
         random.seed()
         s = self.genNew()
         comb = list(itertools.combinations([x + 1 for x in range(len(self.distances) - 1)], 2))
-
         timeout = time.time() + self.duration
         best = s
         while timeout > time.time():
             if len(self.tabu) > self.tabulen:
                 self.tabu = self.tabu[1:]
+
             r = self.genNew()
-            # for _ in range(n - 1):
-            #     w = self.tweak(s)
-            random.shuffle(comb)
-            for x in comb:
+            sample = random.sample(comb, n)
+            for x in sample:
+                if timeout <= time.time():
+                    break
                 w = self.tweak2(s, x[0], x[1])
                 if w not in self.tabu and (self.cost(w) < self.cost(r) or r in self.tabu):
                     r = w
@@ -62,7 +62,7 @@ class TSPTabu:
             if self.cost(s) < self.cost(best):
                 best = s
 
-        return best
+        return best, self.cost(best)
 
 
 params = input().split(" ")
@@ -77,7 +77,10 @@ for i in range(n):
             distances[i][j] = x
 
 
-search = TSPTabu(distances, 10 * n, t)
-best = search.find(n * (n - 1) / 2)
+search = TSPTabu(distances, 5 * n, t)
+best, cost = search.find(int(n * (n - 1) / 3))
 
-print(best, search.cost(best))
+best.append(0)
+
+print(cost)
+print(" ".join(best), file=sys.stderr)
