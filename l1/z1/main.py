@@ -83,3 +83,5 @@ for x in best:
     print(x, end=' ')
 print(f(best))
 
+print(h([-1,-1,-1,-1]))
+
