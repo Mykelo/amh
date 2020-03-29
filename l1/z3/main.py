@@ -26,6 +26,9 @@ class TabuSearch:
 
             # Generate n neighbours of the current path and try to find a better solution
             for _ in range(n):
+                if timeout <= time.time():
+                    break
+                
                 neighbour = self.path.tweak(currPath)
                 neigbourcost, neighbour = path.cost(neighbour)
 

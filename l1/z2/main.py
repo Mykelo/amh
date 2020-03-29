@@ -46,6 +46,7 @@ class TSPTabu:
     def find(self, n):
         random.seed()
         s = self.initSolution()
+        # s = self.genNew()
         comb = list(itertools.combinations([x + 1 for x in range(len(self.distances) - 1)], 2))
         timeout = time.time() + self.duration
         best = s
@@ -89,4 +90,4 @@ best, cost = search.find(int(n * (n - 1) / 3))
 best.append(0)
 
 print(cost)
-print(" ".join([str(x) for x in best]), file=sys.stderr)
+print(" ".join([str(x + 1) for x in best]), file=sys.stderr)

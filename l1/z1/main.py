@@ -46,6 +46,8 @@ class LocalSearch:
         while timeout > time.time():
             r = self.candidate.tweak(s, sigma)
             for _ in range(n):
+                if timeout <= time.time():
+                    break
                 r = self.candidate.analyze(s, r, self.f, tweakSigma)
             s = r
             if self.f(s) < self.f(best):
@@ -82,6 +84,3 @@ best = search.find(100, sigma, tweakSigma)
 for x in best:
     print(x, end=' ')
 print(f(best))
-
-print(h([-1,-1,-1,-1]))
-
