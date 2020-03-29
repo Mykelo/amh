@@ -28,17 +28,21 @@ class NaivePath(Path):
         directionsOrder = ["D", "L", "U", "R"]
         currDir = 0
         pos = deepcopy(self.start)
-        while not self.map.checkExit(pos):
+        while not (lastStep := self.map.checkExit(pos))[0]:
             newpos = self.move(pos, directionsOrder[currDir])
             if newpos == pos:
                 currDir = (currDir + 1) % 4
             else:
                 pos = newpos
                 path += directionsOrder[currDir]
+        
+        # Add the last step leading to the exit if the path reached it
+        if lastStep[1]:
+            path += lastStep[1]
         return path
 
     def cost(self, path):
-        if self.map.checkExit(self.start) or len(path) == 0: return 0
+        if self.map.checkExit(self.start)[0] or len(path) == 0: return 0
 
         pos = deepcopy(self.start)
         cost = 1
@@ -46,9 +50,10 @@ class NaivePath(Path):
             newpos = self.move(pos, step)
             if newpos == pos:
                 return math.inf, path
+            if (lastStep := self.map.checkExit(newpos))[0]:
+                return cost, path[0:cost] + (lastStep[1] if lastStep[1] else "")
+
             cost += 1
-            if self.map.checkExit(newpos):
-                return cost, path[0:cost]
             pos = newpos
         return math.inf, path
 
@@ -68,8 +73,9 @@ class NaivePathV2(NaivePath):
     def tweak(self, path):
         copy = [x for x in path]
         l = len(copy)
+        maxnum = max(int(l / 5), 2)
         # Swap random number of random pairs
-        for _ in range(random.randrange(1, int(l / 5))):
+        for _ in range(random.randrange(1, maxnum)):
             x = random.randrange(0, l)
             y = random.randrange(0, l)
             copy[x], copy[y] = copy[y], copy[x]

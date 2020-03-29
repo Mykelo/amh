@@ -5,9 +5,13 @@ class Map:
         self.width = len(m[0])
         self.moves = {"U": (-1, 0), "L": (0, -1), "D": (1, 0), "R": (0, 1)}
 
+    # Check if any of the neighbours is the exit and return its direction
     def checkExit(self, pos):
-        neighbours = [((pos[0] + x) % self.height, (pos[1] + y) % self.width) for x, y in self.moves.values()]
-        return any(self.map[n[0]][n[1]] == 8 for n in neighbours)
+        neighbours = [(((pos[0] + v[0]) % self.height, (pos[1] + v[1]) % self.width), k) for k, v in self.moves.items()]
+        res = [k for p, k in neighbours if self.map[p[0]][p[1]] == 8]
+        if len(res) > 0:
+            return True, res[0]
+        return False, None
 
     def findStart(self):
         for x, row in enumerate(self.map):

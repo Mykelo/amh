@@ -41,14 +41,13 @@ class TabuSearch:
                 bestcost = newcost
                 best = currPath
 
-        return best, bestcost
+        return best
 
 t, n, m = (int(x) for x in input().split(" "))
 labyrinth = [list(map(lambda x: int(x), input())) for _ in range(n)]
-
 lab = Map(labyrinth)
 path = NaivePathV2(lab)
 tabusearch = TabuSearch(n, path)
-path, cost = tabusearch.search(t, 100)
-print(cost)
+path = tabusearch.search(t, 100)
+print(len(path))
 print(path, file=sys.stderr)
