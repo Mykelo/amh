@@ -28,13 +28,15 @@ class NaivePath(Path):
         directionsOrder = ["D", "L", "U", "R"]
         currDir = 0
         pos = deepcopy(self.start)
-        while not (lastStep := self.map.checkExit(pos))[0]:
+        lastStep = self.map.checkExit(pos)
+        while not lastStep[0]:
             newpos = self.move(pos, directionsOrder[currDir])
             if newpos == pos:
                 currDir = (currDir + 1) % 4
             else:
                 pos = newpos
                 path += directionsOrder[currDir]
+            lastStep = self.map.checkExit(pos)
         
         # Add the last step leading to the exit if the path reached it
         if lastStep[1]:
@@ -42,7 +44,8 @@ class NaivePath(Path):
         return path
 
     def cost(self, path):
-        if self.map.checkExit(self.start)[0] or len(path) == 0: return 0
+        lastStep = self.map.checkExit(self.start)
+        if lastStep[0] or len(path) == 0: return 0, lastStep[1]
 
         pos = deepcopy(self.start)
         cost = 1
@@ -50,7 +53,8 @@ class NaivePath(Path):
             newpos = self.move(pos, step)
             if newpos == pos:
                 return math.inf, path
-            if (lastStep := self.map.checkExit(newpos))[0]:
+            lastStep = self.map.checkExit(newpos)
+            if lastStep[0]:
                 return cost, path[0:cost] + (lastStep[1] if lastStep[1] else "")
 
             cost += 1
