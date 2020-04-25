@@ -70,7 +70,7 @@ def simAnnealing(maxTime, t, c, path):
 t, n, m = (int(x) for x in input().split(" "))
 labyrinth = [list(map(lambda x: int(x), input())) for _ in range(n)]
 lab = Map(labyrinth)
-path = NaivePathV2(lab)
+path = NaivePath(lab)
 path, cost = simAnnealing(t, 10 ** 4, 0.99, path)
 print(len(path))
 print(path, file=sys.stderr)
