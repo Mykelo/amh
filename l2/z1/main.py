@@ -1,7 +1,5 @@
 import time
 import math
-import functools
-import sys
 import random
 
 def f(x):
@@ -20,13 +18,17 @@ def simAnnealing(maxTime, initSolution, t, c, variance):
     timeout = time.time() + maxTime
     s = initSolution
     best = initSolution
+    lastbest = time.time()
     while timeout > time.time() and t > 0:
         r = tweak(s, variance)
         if f(r) < f(s) or random.random() < math.exp((f(s) - f(r)) / t):
             s = r
         t = t * c
+        if (time.time() - lastbest) > math.log(maxTime) * 2:
+            return best
         if f(s) < f(best):
             best = s
+            lastbest = time.time()
     return best
 
 
@@ -34,6 +36,8 @@ params = input().strip().split(" ")
 t = int(params[0])
 params = params[1:]
 initSolution = [int(x) for x in params]
-solution = simAnnealing(t, initSolution, 10, 0.997, 1)
+solution = simAnnealing(t, initSolution, 10**9, 0.99, 1)
+
+for x in solution:
+    print(x, end=' ')
 print(f(solution))
-print(solution)
