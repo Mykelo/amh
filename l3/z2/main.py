@@ -35,23 +35,24 @@ def crossover(pa, pb):
 
 
 def mutate(p, letters):
+    if random.random() < 0.8:
+        return p
     r = random.random()
     if r < 0.2:
-        return p + ''.join(random.choices(letters, k=(random.randint(0, len(p) // 2))))
-    if r < 0.4:
-        i = random.randrange(0, len(p))
-        return p[:i] + ''.join(random.choices(letters, k=(random.randint(0, len(p) // 2)))) + p[i:]
+        return p + ''.join(random.choices(letters, k=(random.randint(1, 2))))
     if r < 0.6:
+        i = random.randrange(0, len(p))
+        return p[:i] + ''.join(random.choices(letters, k=(random.randint(1, 2)))) + p[i:]
+    if r < 1:
         p = list(p)
-        k = len(p) if len(p) == 1 else random.randrange(0, len(p) // 2)
-        for i in random.choices(range(len(p)), k=k):
-            p[i] = random.choice(letters)
+        for i in range(len(p)):
+            if random.random() < 0.1:
+                p[i] = random.choice(letters)
         return ''.join(p)
     return p
 
 
 def genIndividual(allowedSollutions, letters, maxSize):
-    # p1, p2 = random.choices(allowedSollutions, k=2)
     individual = ''
     for _ in range(random.randrange(maxSize // 2, maxSize)):
         individual += random.choice(letters)
@@ -67,27 +68,27 @@ def ga(popsize, t, dictionary, letters, allowedSollutions):
     best = None
     bestValue = 0
     timeout = time.time() + t
-    # print(P)
+    lastbest = time.time()
+    n = popsize // 2
     while timeout > time.time():
-        # print(len(P))
         allowed = [p for p in P if p in dictionary]
-        # print('after filtering')
-        for p in allowed:
-            newValue = fitness(p, letters)
-            if (best == None or newValue > bestValue) and p in dictionary:
-                best = p
-                bestValue = newValue
-
-        # print('after fitness')
-        Q = []
+        allowed = list(set(allowed))
+        allowed = sorted(allowed, key=lambda x: fitness(x, letters), reverse=True)
+        newValue = fitness(allowed[0], letters)
+        if best == None or newValue > bestValue:
+            best = allowed[0]
+            bestValue = newValue
+            lastbest = time.time()
+        Q = allowed[:n]
         while len(Q) < popsize:
             pa = selectParent(allowed, letters)
             pb = selectParent(allowed, letters)
-            # print(pa, pb)
             ca, cb = crossover(pa, pb)
             Q.append(mutate(ca, lettersList))
             Q.append(mutate(cb, lettersList))
         P = Q[:popsize]
+        if (time.time() - lastbest) > math.log(t) * 2:
+            return best, bestValue
 
     return best, bestValue
 
@@ -109,20 +110,15 @@ dictFile = open('dict.txt', 'r')
 for line in dictFile.readlines():
     dictionary[line.strip().lower()] = True
 
-# s = genIndividual(allowedSollutions, letters, 10)
-# l = list(allowedSollutions.keys())
-# s = selectParent(l, letters)
-# s2 = selectParent(l, letters)
-# print(s, s2, crossover(s, s2))
+# b = 0
+# bs = ''
+# for d in dictionary.keys():
+#     if all([s in letters for s in d]) and fitness(d, letters) > b:
+#         b = fitness(d, letters)
+#         bs = d
 
-b = 0
-bs = ''
-for d in dictionary.keys():
-    if all([s in letters for s in d]) and fitness(d, letters) > b:
-        b = fitness(d, letters)
-        bs = d
+# print(bs, b)
 
-print(bs, b)
-
-best, value = ga(100, t, dictionary, letters, allowedSollutions)
-print(best, value)
+best, value = ga(40, t, dictionary, letters, allowedSollutions)
+print(value)
+print(best, file=sys.stderr)

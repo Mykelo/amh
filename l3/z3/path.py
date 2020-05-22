@@ -33,20 +33,22 @@ class Path:
         return math.inf, path
 
     def mutate(self, path):
+        if random.random() < 0.8:
+            return path
         copy = [x for x in path]
         l = len(copy)
 
         directionsOrder = ["U", "L", "D", "R"]
         r = random.random()
-        if r < 0.2 and l > 0:
+        if r < 0.6 and l > 0:
             s1 = random.randrange(0, l)
             s2 = random.randrange(0, l - s1) + s1
             copy = copy[:s1] + copy[s1:s2][::-1] + copy[s2:]
-        elif r < 0.4 and l > 0:
+        elif r < 0.8 and l > 0:
             length = random.randint(0, min(l // 5, 5))
             index = random.randrange(0, l - length)
             copy = copy[:index] + copy[index + length:]
-        elif r < 0.5:
+        elif r < 1:
             s1 = random.randrange(0, l)
             s2 = random.randrange(0, l - s1) + s1
             newFragment = [random.choice(directionsOrder) for _ in range(s2 - s1)]

@@ -37,14 +37,12 @@ class Particle:
             self.bestInformantX = x
 
     def updatePosition(self, globalBest, alfa, beta, gamma, delta, epsilon):
-        # print(globalBest, end=' ')
         for i in range(self.size):
             b = random.uniform(0, beta)
             c = random.uniform(0, gamma)
             d = random.uniform(0, delta)
             vi = alfa * self.velocity[i] + b * (self.bestX[i] - self.x[i]) + c * (self.bestInformantX[i] - self.x[i]) + d * (globalBest[i] - self.x[i])
             self.x[i] += epsilon * vi
-        # print(globalBest)
     
 
 def particleSwarm(initSolution, randomVariables, swarmsize, alfa, beta, gamma, delta, epsilon, t):
@@ -55,7 +53,6 @@ def particleSwarm(initSolution, randomVariables, swarmsize, alfa, beta, gamma, d
         x = [random.gauss(xi, 7) for xi in initSolution]
         swarm.append(Particle(x, 0.05, 5, currF))
 
-    # Assign random particles to inform
     for p in swarm:
         for i in random.choices(swarm, k=(swarmsize // 3)):
             i.addObserver(p)

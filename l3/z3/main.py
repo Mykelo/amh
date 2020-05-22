@@ -25,7 +25,7 @@ def crossover(pa, pb):
     r = random.random()
     if r < 0.5:
         for i in range(min(len(pa), len(pb))):
-            if random.random() < 0.2:
+            if random.random() < 0.3:
                 pa[i], pb[i] = pb[i], pa[i]
     else:
         ia = random.randrange(0, len(pa))
@@ -33,23 +33,6 @@ def crossover(pa, pb):
         pa, pb = pa[:ia] + pb[ib:], pa[ia:] + pb[:ib]
 
     return ''.join(pa), ''.join(pb)
-
-
-def mutate(p, letters):
-    r = random.random()
-    if r < 0.2:
-        return p + ''.join(random.choices(letters, k=(random.randint(0, len(p) // 2))))
-    if r < 0.4:
-        i = random.randrange(0, len(p))
-        return p[:i] + ''.join(random.choices(letters, k=(random.randint(0, len(p) // 2)))) + p[i:]
-    if r < 0.6:
-        p = list(p)
-        k = len(p) if len(p) < 3 else random.randrange(0, len(p) // 3)
-        for i in random.choices(range(len(p)), k=k):
-            p[i] = random.choice(letters)
-        return ''.join(p)
-    return p
-
 
 
 def ga(popsize, t, P, path):
@@ -64,7 +47,7 @@ def ga(popsize, t, P, path):
         newValue, newBest = path.cost(P[0])
         if bestValue > newValue:
             bestValue, best = newValue, newBest
-            lastBest = time.time()
+            lastbest = time.time()
         # print('after fitness')
         Q = P[:n]
         while len(Q) < popsize:
@@ -87,8 +70,6 @@ initPopulation = [input().strip() for _ in range(s)]
 lab = Map(labyrinth)
 path = Path(lab)
 
-# initPopulation = sorted(initPopulation, key=lambda x: path.cost(x)[0])
-# print([path.cost(x) for x in initPopulation])
 path, cost = ga(p, t, initPopulation, path)
 print(len(path))
 print(path, file=sys.stderr)
