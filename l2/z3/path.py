@@ -71,11 +71,12 @@ class NaivePath(Path):
         l = len(copy)
 
         directionsOrder = ["U", "L", "D", "R"]
-        if random.random() < 0.4 and l > 0:
+        r = random.random()
+        if r < 0.4 and l > 0:
             s1 = random.randrange(0, l)
             s2 = random.randrange(0, l - s1) + s1
             copy = copy[:s1] + copy[s1:s2][::-1] + copy[s2:]
-        elif random.random() < 0.15 and l > 0:
+        elif r < 0.5 and l > 0:
             length = random.randint(0, min(l // 5, 5))
             index = random.randrange(0, l - length)
             copy = copy[:index] + copy[index + length:]
