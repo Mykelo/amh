@@ -40,7 +40,6 @@ def ga(popsize, t, P, path):
     bestValue = math.inf
     n = popsize // 2
     timeout = time.time() + t
-    # print(P)
     lastbest = time.time()
     while timeout > time.time():
         P = sorted(P, key=lambda x: path.cost(x)[0])
@@ -48,12 +47,10 @@ def ga(popsize, t, P, path):
         if bestValue > newValue:
             bestValue, best = newValue, newBest
             lastbest = time.time()
-        # print('after fitness')
         Q = P[:n]
         while len(Q) < popsize:
             pa = selectParent(P, path)
             pb = selectParent(P, path)
-            # print(pa, pb)
             ca, cb = crossover(pa, pb)
             Q.append(path.mutate(ca))
             Q.append(path.mutate(cb))
