@@ -148,10 +148,6 @@ dictFile = open('dict.txt', 'r')
 for line in dictFile.readlines():
     dictionary[line.strip().lower()] = True
 
-# print(genIndividual(allowedSollutions, getLettersList(letters), 10))
-# print(twoPointCrossover('b', 'a'))
-
-
 best, value = ga(20, t, dictionary, letters, allowedSollutions)
 print(value)
 print(best, file=sys.stderr)
