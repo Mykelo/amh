@@ -5,7 +5,9 @@ from copy import copy, deepcopy
 import sys
 
 
-def fitness(p, letters):
+def fitness(p, letters, dictionary):
+    if not isValid(p, letters) or p not in dictionary:
+        return 0
     return sum([letters[pi][0] for pi in p])
 
 def isValid(p, letters):
@@ -18,15 +20,15 @@ def isValid(p, letters):
 
     return all([c in letters and d[c] <= letters[c][1] for c in d.keys()])
 
-def selectParent(population, letters):
-    t = 4
+def selectParent(population, letters, dictionary):
+    t = 7
     best = random.choice(population)
-    bestValue = fitness(best, letters)
+    bestValue = fitness(best, letters, dictionary)
     for _ in range(t - 1):
         p = random.choice(population)
-        if fitness(p, letters) > bestValue:
+        if fitness(p, letters, dictionary) > bestValue:
             best = p
-            bestValue = fitness(p, letters)
+            bestValue = fitness(p, letters, dictionary)
     return best
 
 def twoPointCrossover(pa, pb):
@@ -50,8 +52,9 @@ def crossover(pa, pb):
         return twoPointCrossover(pa, pb)
     newpa = list(pa)
     newpb = list(pb)
-    for i in range(min(len(newpa), len(newpb))):
-        if random.random() < 0.2:
+    l = min(len(newpa), len(newpb))
+    for i in range(l):
+        if random.random() < 1 / l:
             newpa[i], newpb[i] = newpb[i], newpa[i]
 
     return ''.join(newpa), ''.join(newpb)
@@ -74,7 +77,7 @@ def mutate(p, letters):
     if r < 1:
         p = list(p)
         for i in range(len(p)):
-            if random.random() < 0.7:
+            if random.random() < 0.2:
                 p[i] = random.choice(letters)
         return ''.join(p)
     return p
@@ -87,7 +90,7 @@ def getLettersList(letters):
     return lettersList
 
 
-def genIndividual(allowedSollutions, letters, maxSize):
+def genIndividual(allowedSollutions, letters):
     random.shuffle(letters)
     return ''.join(letters[:random.randrange(1, len(letters))])
 
@@ -96,30 +99,30 @@ def ga(popsize, t, dictionary, letters, allowedSollutions):
     lettersList = getLettersList(letters)
     P = list(allowedSollutions.keys())[:popsize]
     while len(P) < popsize:
-        P.append(genIndividual(allowedSollutions, lettersList, 10))
+        P.append(genIndividual(allowedSollutions, lettersList))
     best = None
     bestValue = 0
     timeout = time.time() + t
     lastbest = time.time()
-    n = popsize // 4
+    n = popsize // 2
     while timeout > time.time():
         allowed = [p for p in P if p in dictionary and isValid(p, letters)]
         allowed = list(set(allowed))
-        allowed = sorted(allowed, key=lambda x: fitness(x, letters), reverse=True)
-        newValue = fitness(allowed[0], letters)
+        allowed = sorted(allowed, key=lambda x: fitness(x, letters, dictionary), reverse=True)
+        newValue = fitness(allowed[0], letters, dictionary)
         if best == None or newValue > bestValue:
             best = allowed[0]
             bestValue = newValue
             lastbest = time.time()
         Q = allowed[:n]
         while len(Q) < popsize:
-            pa = selectParent(allowed, letters)
-            pb = selectParent(allowed, letters)
+            pa = selectParent(P, letters, dictionary)
+            pb = selectParent(P, letters, dictionary)
             ca, cb = crossover(pa, pb)
             Q.append(mutate(ca, lettersList))
             Q.append(mutate(cb, lettersList))
         P = Q[:popsize]
-        if (time.time() - lastbest) > math.log(t) * 2:
+        if (time.time() - lastbest) > math.log(t + 1) * 2:
             return best, bestValue
 
     return best, bestValue
@@ -149,6 +152,6 @@ for line in dictFile.readlines():
 # print(twoPointCrossover('b', 'a'))
 
 
-best, value = ga(40, t, dictionary, letters, allowedSollutions)
+best, value = ga(20, t, dictionary, letters, allowedSollutions)
 print(value)
 print(best, file=sys.stderr)

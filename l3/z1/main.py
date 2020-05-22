@@ -77,14 +77,13 @@ def particleSwarm(initSolution, randomVariables, swarmsize, alfa, beta, gamma, d
 
 
 
-
 params = input().strip().split(" ")
 t = int(params[0])
 params = params[1:]
 initSolution = [int(x) for x in params[:5]]
 randomVariables = [float(x) for x in params[5:]]
 
-solution, value = particleSwarm(initSolution, randomVariables, 100, 0.5, 0.2, 1, 0.5, 1, t)
+solution, value = particleSwarm(initSolution, randomVariables, 40, 0.5, 0.2, 1, 0.5, 1, t)
 for b in solution:
     print(b, end=' ')
 print(value)

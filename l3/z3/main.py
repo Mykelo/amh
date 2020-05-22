@@ -23,9 +23,10 @@ def crossover(pa, pb):
     pa = list(pa)
     pb = list(pb)
     r = random.random()
+    l = min(len(pa), len(pb))
     if r < 0.5:
-        for i in range(min(len(pa), len(pb))):
-            if random.random() < 0.3:
+        for i in range(l):
+            if random.random() < 1 / l:
                 pa[i], pb[i] = pb[i], pa[i]
     else:
         ia = random.randrange(0, len(pa))
@@ -55,7 +56,7 @@ def ga(popsize, t, P, path):
             Q.append(path.mutate(ca))
             Q.append(path.mutate(cb))
         P = Q[:popsize]
-        if (time.time() - lastbest) > math.log(t) * 2:
+        if (time.time() - lastbest) > math.log(t + 1) * 2:
             return best, bestValue
 
     return best, bestValue
