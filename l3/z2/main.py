@@ -77,7 +77,7 @@ def mutate(p, letters):
     if r < 1:
         p = list(p)
         for i in range(len(p)):
-            if random.random() < 0.2:
+            if random.random() < 0.3:
                 p[i] = random.choice(letters)
         return ''.join(p)
     return p
