@@ -77,7 +77,7 @@ def mutate(p, letters):
     if r < 1:
         p = list(p)
         for i in range(len(p)):
-            if random.random() < 0.2:
+            if random.random() < 0.3:
                 p[i] = random.choice(letters)
         return ''.join(p)
     return p
@@ -147,10 +147,6 @@ dictFile = open('dict.txt', 'r')
 
 for line in dictFile.readlines():
     dictionary[line.strip().lower()] = True
-
-# print(genIndividual(allowedSollutions, getLettersList(letters), 10))
-# print(twoPointCrossover('b', 'a'))
-
 
 best, value = ga(20, t, dictionary, letters, allowedSollutions)
 print(value)
