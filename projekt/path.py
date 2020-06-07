@@ -41,29 +41,32 @@ class Path:
             pos = newpos
         return math.inf, path, (pos[0] - first_pos[0], pos[1] - first_pos[1])
 
-    def mutate(self, path):
-        if random.random() < 0.8:
-            return path
-        copy = [x for x in path]
-        l = len(copy)
-
+    def initPath(self):
+        path = ""
         directionsOrder = ["U", "L", "D", "R"]
-        r = random.random()
-        if r < 0.6 and l > 0:
-            s1 = random.randrange(0, l)
-            s2 = random.randrange(0, l - s1) + s1
-            copy = copy[:s1] + copy[s1:s2][::-1] + copy[s2:]
-        elif r < 0.8 and l > 0:
-            length = random.randint(0, min(l // 5, 5))
-            index = random.randrange(0, l - length)
-            copy = copy[:index] + copy[index + length:]
-        elif r < 1:
-            s1 = random.randrange(0, l)
-            s2 = random.randrange(0, l - s1) + s1
-            newFragment = [random.choice(directionsOrder) for _ in range(s2 - s1)]
-            copy = copy[:s1] + newFragment + copy[s2:]
+        currDir = 0
+        pos = deepcopy(self.start)
+        lastStep = self.map.checkExit(pos)
+        while not lastStep[0]:
+            newpos = self.move(pos, directionsOrder[currDir], self.map)
+            if newpos == pos:
+                currDir = random.randint(0, 3)
+            else:
+                pos = newpos
+                path += directionsOrder[currDir]
+                if random.random() < 0.15:
+                    currDir = random.randint(0, 3)
 
-        return "".join(copy)
+            if len(path) > self.map.width * self.map.height / 3:
+                pos = deepcopy(self.start)
+                path = ""
+            lastStep = self.map.checkExit(pos)
+        
+        # Add the last step leading to the exit if the path reached it
+        if lastStep[1]:
+            path += lastStep[1]
+        return path
+
     
     def tweak(self, path):
         copy = [x for x in path]
