@@ -10,12 +10,12 @@ from path import *
 def simAnnealing(maxTime, t, c, path, initSolution):
     timeout = time.time() + maxTime
     s = initSolution
-    bestcost, best, _ = path.cost(s)
+    bestcost, best = path.cost(s)
     lastbest = time.time()
     while timeout > time.time() and t > 0:
         r = path.tweak(s)
-        rcost, r, _ = path.cost(r)
-        scost, s, _ = path.cost(s)
+        rcost, r = path.cost(r)
+        scost, s = path.cost(s)
         if rcost < scost or random.random() < math.exp((scost - rcost) / t):
             s = r
         t = t * c

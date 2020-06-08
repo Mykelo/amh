@@ -24,22 +24,21 @@ class Path:
     def cost(self, path):
         lastStep = self.map.checkExit(self.start)
         if lastStep[0] or len(path) == 0:
-            return 0, lastStep[1], [0, 0]
+            return 0, lastStep[1]
 
         pos = deepcopy(self.start)
-        first_pos = deepcopy(self.start)
         cost = 1
         for step in path:
             newpos = self.move(pos, step, self.map)
             if newpos == pos:
-                return math.inf, path[0:cost-1], (newpos[0] - first_pos[0], newpos[1] - first_pos[1])
+                return math.inf, path[0:cost-1]
             lastStep = self.map.checkExit(newpos)
             if lastStep[0]:
-                return cost, path[0:cost] + (lastStep[1] if lastStep[1] else ""), (newpos[0] - first_pos[0], newpos[1] - first_pos[1])
+                return cost, path[0:cost] + (lastStep[1] if lastStep[1] else "")
 
             cost += 1
             pos = newpos
-        return math.inf, path, (pos[0] - first_pos[0], pos[1] - first_pos[1])
+        return math.inf, path
 
     def initPath(self):
         path = ""
